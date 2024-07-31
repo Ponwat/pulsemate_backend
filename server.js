@@ -4,17 +4,27 @@ const expressWs = require("express-ws")(app);
 
 // const readFileNameInDir = require("./utils/readFileNameInDir.js");
 
-// const addRouteFromGetPath = (path) => {
-// 	const { route, callback } = require(path);
-// 	app.get(route, callback);
-// 	console.log(`added get: ${route}`);
-// };
+const addRouteFromGetPath = (path) => {
+	const { route, callback } = require(path);
+	app.get(route, callback);
+	console.log(`added get: ${route}`);
+};
 
-// const addRouteFromWsPath = (path) => {
-// 	const { route, callback } = require(path);
-// 	app.ws(route, callback);
-// 	console.log(`added ws: ${route}`);
-// };
+const addRouteFromWsPath = (path) => {
+	const { route, callback } = require(path);
+	app.ws(route, callback);
+	console.log(`added ws: ${route}`);
+};
+
+const files = [
+	"./routes/get/node/sendData.js",
+	"./routes/get/node/sendError.js",
+	"./routes/get/getData",
+	"./routes/get/setId",
+];
+for (const filePath of files) {
+addRouteFromGetPath(filePath);
+}
 
 // const getPath = "./routes/get/";
 // const getFilePaths = readFileNameInDir(getPath);
