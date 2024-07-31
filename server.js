@@ -22,9 +22,11 @@ const files = [
 	"./routes/get/getData",
 	"./routes/get/setId",
 ];
-for (const filePath of files) {
-addRouteFromGetPath(filePath);
-}
+
+addRouteFromGetPath("./routes/get/node/sendData.js");
+addRouteFromGetPath("./routes/get/node/sendError.js");
+addRouteFromGetPath("./routes/get/getData");
+addRouteFromGetPath("./routes/get/setId");
 
 // const getPath = "./routes/get/";
 // const getFilePaths = readFileNameInDir(getPath);
