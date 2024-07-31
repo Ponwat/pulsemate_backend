@@ -15,7 +15,7 @@ module.exports = {
 		if (user) socket = memory.get("ws");
 		if (socket) socket.send({ error: error });
 
-		await sleep(3);
+		await sleep(30);
 
 		memory.set("idle", true);
 		if (socket) socket.send({ idle: true });
