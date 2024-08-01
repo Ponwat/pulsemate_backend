@@ -59,6 +59,7 @@ app.get("/getData", (req, res) => {
 		return;
 	}
 
+	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(getMeasuredData());
 });
 
