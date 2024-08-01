@@ -19,6 +19,7 @@ app.get("/node/sendData", async (req, res) => {
 			`&entry.8872831=${user.name}`;
 		fetch(url);
 	}
+	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(req.query);
 
 	let socket = undefined;
@@ -36,6 +37,7 @@ app.get("/node/sendError", async (req, res) => {
 	const error = req.query.error;
 	memory.set("error", error);
 
+	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(error);
 
 	const user = memory.get("user");
@@ -51,10 +53,12 @@ app.get("/node/sendError", async (req, res) => {
 
 app.get("/getData", (req, res) => {
 	if (memory.get("idle")) {
+		res.setHeader("Access-Control-Allow-Origin", "*");
 		res.json({ idle: true });
 		return;
 	}
 	if (memory.get("error")) {
+		res.setHeader("Access-Control-Allow-Origin", "*");
 		res.json({ error: true });
 		return;
 	}
