@@ -63,7 +63,7 @@ app.get("/setId", (req, res) => {
 	res.json(req.query);
 	setTimeout(() => {
 		memory.set("user", undefined);
-	}, 2*60*1000);
+	}, 2*1000);
 });
 
 app.get("/unsetId", (req, res) => {
