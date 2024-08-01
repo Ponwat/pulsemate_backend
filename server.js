@@ -20,9 +20,8 @@ app.get("/node/sendData", async (req, res) => {
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(req.query);
 
-	await sleep(30);
+	await sleep(60);
 
-	
 	memory.set("sys", undefined);
 	memory.set("dia", undefined);
 	memory.set("pul", undefined);
@@ -37,7 +36,7 @@ app.get("/node/sendError", async (req, res) => {
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json({ error: error });
 
-	await sleep(30);
+	await sleep(60);
 
 	memory.set("error", undefined);
 	memory.set("idle", true);
