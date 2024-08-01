@@ -2,6 +2,7 @@ const memory = require("./memory");
 
 const getMeasureData = () => {
 	return {
+		user: memory.get("user"),
 		sys: memory.get("sys"),
 		dia: memory.get("dia"),
 		pul: memory.get("pul"),
