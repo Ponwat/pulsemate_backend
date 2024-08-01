@@ -75,6 +75,13 @@ app.get("/setId", (req, res) => {
 	res.json(req.query);
 });
 
+app.get("/unsetId", (req, res) => {
+	memory.set("user", undefined);
+
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.json({status: "ok"});
+});
+
 app.ws("/dataUpdate", (ws, req) => {
 	const last = memory.get("ws");
 	if (last) last.close(4002, "forced close");
