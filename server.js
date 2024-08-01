@@ -20,34 +20,27 @@ app.get("/node/sendData", async (req, res) => {
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(req.query);
 
-	let socket = undefined;
-	if (user) socket = memory.get("ws");
-	if (socket) socket.send(JSON.stringify(req.query));
-
 	await sleep(30);
 
+	
+	memory.set("sys", undefined);
+	memory.set("dia", undefined);
+	memory.set("pul", undefined);
 	memory.set("idle", true);
-	if (socket) socket.send(JSON.stringify({ idle: true }));
 });
 
 app.get("/node/sendError", async (req, res) => {
-	memory.set("idle", false);
 	const error = req.query.error;
+	memory.set("idle", false);
 	memory.set("error", error);
 
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json({ error: error });
 
-	const user = memory.get("user");
-	let socket = undefined;
-	if (user) socket = memory.get("ws");
-	if (socket) socket.send({ error: error });
-
 	await sleep(30);
 
 	memory.set("error", undefined);
 	memory.set("idle", true);
-	if (socket) socket.send({ idle: true });
 });
 
 app.get("/getData", (req, res) => {
@@ -56,14 +49,16 @@ app.get("/getData", (req, res) => {
 });
 
 app.get("/setId", (req, res) => {
-	console.log(req.query);
+	const timeoutId = memory.get("timeout");
+	if (timeoutId) clearTimeout(timeoutId);
 	memory.set("user", req.query);
 
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(req.query);
-	setTimeout(() => {
+	const id = setTimeout(() => {
 		memory.set("user", undefined);
 	}, 2*1000);
+	memory.set("timeout", id);
 });
 
 app.get("/unsetId", (req, res) => {
