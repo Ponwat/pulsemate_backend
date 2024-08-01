@@ -38,7 +38,7 @@ app.get("/node/sendError", async (req, res) => {
 	memory.set("error", error);
 
 	res.setHeader("Access-Control-Allow-Origin", "*");
-	res.json(error);
+	res.json({error: error});
 
 	const user = memory.get("user");
 	let socket = undefined;
