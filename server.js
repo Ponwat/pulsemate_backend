@@ -1,12 +1,29 @@
 const express = require("express");
 const app = express();
 
-const { getMeasuredData, setMeasuredData } = require("./utils/measuredData.js");
+const {
+	getMeasuredData,
+	setMeasuredData,
+	setError,
+	unsetData,
+} = require("./utils/measuredData.js");
 const memory = require("./utils/memory.js");
-const sleep = require("./utils/sleep.js");
+
+const waitThenResetData = (seconds) => {
+	const thisData = setTimeout(() => {
+		const lastData = memory.get("lastData");
+		if (lastData) clearTimeout(lastData);
+
+		unsetData();
+	}, seconds * 1000);
+	memory.set("lastData", thisData);
+};
 
 app.get("/node/sendData", async (req, res) => {
 	setMeasuredData(req.query);
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.json(req.query);
+
 	const user = memory.get("user");
 	if (user) {
 		const url =
@@ -17,54 +34,54 @@ app.get("/node/sendData", async (req, res) => {
 			`&entry.8872831=${user.name}`;
 		fetch(url);
 	}
-	res.setHeader("Access-Control-Allow-Origin", "*");
-	res.json(req.query);
 
-	await sleep(60);
-
-	memory.set("sys", undefined);
-	memory.set("dia", undefined);
-	memory.set("pul", undefined);
-	memory.set("idle", true);
+	waitThenResetData(60);
 });
 
 app.get("/node/sendError", async (req, res) => {
-	const error = req.query.error;
-	memory.set("idle", false);
-	memory.set("error", error);
-
+	setError(req.query);
 	res.setHeader("Access-Control-Allow-Origin", "*");
-	res.json({ error: error });
+	res.json(req.query);
 
-	await sleep(60);
-
-	memory.set("error", undefined);
-	memory.set("idle", true);
+	waitThenResetData(60);
 });
 
 app.get("/getData", (req, res) => {
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(getMeasuredData());
+	console.log(getMeasuredData());
 });
 
 app.get("/setId", (req, res) => {
-	const timeoutId = memory.get("timeout");
+	const timeoutId = memory.get("userTimeout");
 	if (timeoutId) clearTimeout(timeoutId);
 	memory.set("user", req.query);
+	console.log(req.query);
+	memory.set("userCount", memory.get("userCount") + 1);
 
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(req.query);
 	const id = setTimeout(() => {
-		memory.set("user", undefined);
-	}, 10*1000);
-	memory.set("timeout", id);
+		let userCount = memory.get("userCount") - 1;
+		if (userCount < 1) {
+			memory.set("user", undefined);
+			userCount = 0;
+		}
+		memory.set("userCount", userCount);
+	}, 10 * 1000);
+	memory.set("userTimeout", id);
 });
 
 app.get("/unsetId", (req, res) => {
-	memory.set("user", undefined);
+	let userCount = memory.get("userCount") - 1;
+	if (userCount < 1) {
+		memory.set("user", undefined);
+		userCount = 0;
+	}
+	memory.set("userCount", userCount);
 
 	res.setHeader("Access-Control-Allow-Origin", "*");
-	res.json({ status: "ok" });
+	res.json({ userCount: userCount });
 });
 
 app.listen(3000, () => {
