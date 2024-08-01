@@ -1,13 +1,11 @@
 const express = require("express");
 const app = express();
-const expressWs = require("express-ws")(app);
 
 const { getMeasuredData, setMeasuredData } = require("./utils/measuredData.js");
 const memory = require("./utils/memory.js");
 const sleep = require("./utils/sleep.js");
 
 app.get("/node/sendData", async (req, res) => {
-	memory.set("idle", false);
 	setMeasuredData(req.query);
 	const user = memory.get("user");
 	if (user) {
@@ -38,7 +36,7 @@ app.get("/node/sendError", async (req, res) => {
 	memory.set("error", error);
 
 	res.setHeader("Access-Control-Allow-Origin", "*");
-	res.json({error: error});
+	res.json({ error: error });
 
 	const user = memory.get("user");
 	let socket = undefined;
@@ -47,22 +45,12 @@ app.get("/node/sendError", async (req, res) => {
 
 	await sleep(30);
 
+	memory.set("error", undefined);
 	memory.set("idle", true);
 	if (socket) socket.send({ idle: true });
 });
 
 app.get("/getData", (req, res) => {
-	if (memory.get("idle")) {
-		res.setHeader("Access-Control-Allow-Origin", "*");
-		res.json({ idle: true });
-		return;
-	}
-	if (memory.get("error")) {
-		res.setHeader("Access-Control-Allow-Origin", "*");
-		res.json({ error: true });
-		return;
-	}
-
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(getMeasuredData());
 });
@@ -79,24 +67,7 @@ app.get("/unsetId", (req, res) => {
 	memory.set("user", undefined);
 
 	res.setHeader("Access-Control-Allow-Origin", "*");
-	res.json({status: "ok"});
-});
-
-app.ws("/dataUpdate", (ws, req) => {
-	const last = memory.get("ws");
-	if (last) last.close(4002, "forced close");
-
-	ws.on("message", (msg) => {
-		console.log(msg);
-	});
-	ws.on("close", (code, msg) => {
-		memory.set("user", undefined);
-		console.log("closed");
-		console.log(code, msg);
-	});
-
-	ws.send("connected");
-	memory.set("ws", ws);
+	res.json({ status: "ok" });
 });
 
 app.listen(3000, () => {
