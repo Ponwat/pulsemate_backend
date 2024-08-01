@@ -62,7 +62,7 @@ app.get("/setId", (req, res) => {
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(req.query);
 	setTimeout(() => {
-		memory.set("user", req.query);
+		memory.set("user", undefined);
 	}, 2*60*1000);
 });
 
