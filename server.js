@@ -56,7 +56,7 @@ app.get("/setId", (req, res) => {
 	res.json(req.query);
 	const id = setTimeout(() => {
 		memory.set("user", undefined);
-	}, 2*1000);
+	}, 10*1000);
 	memory.set("timeout", id);
 });
 
