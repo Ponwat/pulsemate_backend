@@ -53,23 +53,12 @@ app.get("/getData", (req, res) => {
 });
 
 app.get("/setId", (req, res) => {
-	const timeoutId = memory.get("userTimeout");
-	if (timeoutId) clearTimeout(timeoutId);
 	memory.set("user", req.query);
 	console.log(req.query);
 	memory.set("userCount", memory.get("userCount") + 1);
 
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(req.query);
-	const id = setTimeout(() => {
-		let userCount = memory.get("userCount") - 1;
-		if (userCount < 1) {
-			memory.set("user", undefined);
-			userCount = 0;
-		}
-		memory.set("userCount", userCount);
-	}, 10 * 1000);
-	memory.set("userTimeout", id);
 });
 
 app.get("/unsetId", (req, res) => {
