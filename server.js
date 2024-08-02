@@ -19,6 +19,13 @@ const waitThenResetData = (seconds) => {
 	memory.set("lastData", thisData);
 };
 
+app.get("/node/resetData", async (req, res) => {
+	unsetData();
+
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.json(getMeasuredData());
+});
+
 app.get("/node/sendData", async (req, res) => {
 	setMeasuredData(req.query);
 	res.setHeader("Access-Control-Allow-Origin", "*");
