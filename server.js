@@ -53,6 +53,7 @@ app.get("/getData", (req, res) => {
 });
 
 app.get("/setId", (req, res) => {
+	memory.set(user, res.query);
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(req.query);
 });
