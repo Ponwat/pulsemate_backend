@@ -53,13 +53,22 @@ app.get("/getData", (req, res) => {
 });
 
 app.get("/setId", (req, res) => {
-	memory.set(user, res.query);
+	memory.set("user", req.query);
+	console.log(req.query);
+	memory.set("userCount", memory.get("userCount") + 1);
+
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json(req.query);
 });
 
 app.get("/unsetId", (req, res) => {
-	memory.set("user", undefined);
+	let userCount = memory.get("userCount") - 1;
+	if (userCount < 1) {
+		memory.set("user", undefined);
+		userCount = 0;
+	}
+	memory.set("userCount", userCount);
+
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.json({ userCount: userCount });
 });
